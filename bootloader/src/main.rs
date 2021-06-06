@@ -2,7 +2,7 @@
 #![feature(core_intrinsics)]
 #![no_std]
 #![no_main]
-#![feature(asm)]
+#![feature(llvm_asm)]
 
 use core::panic::PanicInfo;
 use core::fmt::Write;
@@ -122,7 +122,7 @@ extern "C" fn rust_boot_handler() -> ! {
     let sie: u32;
     let sp: u32;
     unsafe {
-        asm!(
+        llvm_asm!(
             "
         csrrs $0, sepc, x0\n
         csrrs $1, scause, x0\n
@@ -140,7 +140,7 @@ extern "C" fn rust_boot_handler() -> ! {
     );
     if scause == (1 << 17) {
         unsafe {
-            asm!(
+            llvm_asm!(
                 "
                 lw x0, 0(sp)\n
                 lw x1, 4(sp)\n
@@ -188,7 +188,7 @@ extern "C" fn rust_boot_handler() -> ! {
 
 fn setup_boot_time_trap() {
     unsafe {
-        asm!(
+        llvm_asm!(
             "
         lui     a0, %hi(boot_time_trap_handler)
         addi    a0, a0, %lo(boot_time_trap_handler)
@@ -220,7 +220,7 @@ pub extern "C" fn __start_rust() -> ! {
         addr += 4;
     }
     unsafe {
-        asm!(
+        llvm_asm!(
             "
             lui a0, %hi(0x80000004)
             addi a0, a0, %lo(0x80000004)
@@ -236,14 +236,14 @@ pub extern "C" fn __start_rust() -> ! {
 
         let sp: u32;
         unsafe {
-            asm!("
+            llvm_asm!("
                 mv $0, sp"
                 :"=&r"(sp));
         }
 
         println!("{:x} {:x} {:x}", addr, unsafe { *target }, sp);
 
-        asm!(
+        llvm_asm!(
             "
             lui a0, %hi(KERN_START)
             addi a0, a0, %lo(KERN_START)

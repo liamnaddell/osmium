@@ -1,3 +1,4 @@
+#![feature(llvm_asm)]
 use core::fmt;
 use osmium_syscall::errors::SyscallError;
 use osmium_syscall::number;
@@ -6,7 +7,7 @@ use osmium_syscall::perm;
 fn syscall_0(num: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)
@@ -19,7 +20,7 @@ fn syscall_0(num: u32) -> u32 {
 fn syscall_1(num: u32, a: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)
@@ -32,7 +33,7 @@ fn syscall_1(num: u32, a: u32) -> u32 {
 fn syscall_2(num: u32, a: u32, b: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)
@@ -45,7 +46,7 @@ fn syscall_2(num: u32, a: u32, b: u32) -> u32 {
 fn syscall_3(num: u32, a: u32, b: u32, c: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)
@@ -58,7 +59,7 @@ fn syscall_3(num: u32, a: u32, b: u32, c: u32) -> u32 {
 fn syscall_4(num: u32, a: u32, b: u32, c: u32, d: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)
@@ -71,7 +72,7 @@ fn syscall_4(num: u32, a: u32, b: u32, c: u32, d: u32) -> u32 {
 fn syscall_5(num: u32, a: u32, b: u32, c: u32, d: u32, e: u32) -> u32 {
     let result: u32;
     unsafe {
-        asm!("
+        llvm_asm!("
             ecall
         "
         : "={x10}"(result)

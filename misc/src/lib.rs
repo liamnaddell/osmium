@@ -1,5 +1,6 @@
 #![no_main]
-#![feature(asm)]
+//#![feature(asm)]
+#![feature(llvm_asm)]
 #![no_std]
 
 extern crate osmium_syscall;
