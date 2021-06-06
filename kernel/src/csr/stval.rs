@@ -8,7 +8,7 @@ impl CSRRead for STVAL {
     fn read_csr() -> u32 {
         let result: u32;
         unsafe {
-            asm!("csrrs $0, stval, x0"
+            llvm_asm!("csrrs $0, stval, x0"
                 : "=&r"(result));
         }
         result

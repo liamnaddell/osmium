@@ -2,7 +2,8 @@
 #![feature(core_intrinsics)]
 #![no_std]
 #![no_main]
-#![feature(asm)]
+//#![feature(asm)]
+#![feature(llvm_asm)]
 
 #[macro_use]
 extern crate bitflags;
@@ -91,7 +92,7 @@ pub extern "C" fn __start_rust() -> ! {
 
     paging::PageTable::setup_tmp_table(kern_pgdir, kern_tmp_pgdir);
 
-    let kernel_frames = unsafe { (&mut kernel_frames_ptr as *mut u32) };
+    let kernel_frames = unsafe { &mut kernel_frames_ptr as *mut u32 };
     println!("kern frames addr {:p}", kernel_frames);
 
     let mut mapper = paging::Map::new(kern_pgdir, kern_tmp_pgdir);

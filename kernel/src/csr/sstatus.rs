@@ -10,7 +10,7 @@ impl CSRRead for SSTATUS {
     fn read_csr() -> u32 {
         let result: u32;
         unsafe {
-            asm!("csrrs $0, sstatus, x0"
+            llvm_asm!("csrrs $0, sstatus, x0"
                 : "=&r"(result));
         }
         result
@@ -27,7 +27,7 @@ impl CSRWrite for SSTATUS {
         let result: u32;
 
         unsafe {
-            asm!("csrrw $0, sstatus, $1"
+            llvm_asm!("csrrw $0, sstatus, $1"
                 : "=&r"(result)
                 :   "r"(val));
         }
@@ -35,7 +35,7 @@ impl CSRWrite for SSTATUS {
     }
     fn write_csr(val: u32) {
         unsafe {
-            asm!("csrrw x0, sstatus, $0"
+            llvm_asm!("csrrw x0, sstatus, $0"
                 :
                 : "r"(val));
         }
@@ -43,7 +43,7 @@ impl CSRWrite for SSTATUS {
 
     fn bit_set(bitvec: u32) {
         unsafe {
-            asm!("csrrs x0, sstatus, $0"
+            llvm_asm!("csrrs x0, sstatus, $0"
                 :
                 : "r"(bitvec));
         }
@@ -51,7 +51,7 @@ impl CSRWrite for SSTATUS {
 
     fn bit_clear(bitvec: u32) {
         unsafe {
-            asm!("csrrc x0, sstatus, $0"
+            llvm_asm!("csrrc x0, sstatus, $0"
                 :
                 : "r"(bitvec));
         }

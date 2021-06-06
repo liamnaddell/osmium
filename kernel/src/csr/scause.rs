@@ -9,7 +9,7 @@ impl CSRRead for SCAUSE {
     fn read_csr() -> u32 {
         let result: u32;
         unsafe {
-            asm!("csrrs $0, scause, x0"
+            llvm_asm!("csrrs $0, scause, x0"
                 : "=&r"(result));
         }
         result

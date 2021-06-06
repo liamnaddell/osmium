@@ -9,7 +9,7 @@ impl CSRRead for SEPC {
     fn read_csr() -> u32 {
         let result: u32;
         unsafe {
-            asm!("csrrs $0, sepc, x0"
+            llvm_asm!("csrrs $0, sepc, x0"
                 : "=&r"(result));
         }
         result
@@ -25,7 +25,7 @@ impl CSRWrite for SEPC {
         let result: u32;
 
         unsafe {
-            asm!("csrrw $0, sepc, $1"
+            llvm_asm!("csrrw $0, sepc, $1"
                 : "=&r"(result)
                 :   "r"(val));
         }
@@ -34,7 +34,7 @@ impl CSRWrite for SEPC {
 
     fn write_csr(val: u32) {
         unsafe {
-            asm!("csrrw x0, sepc, $0"
+            llvm_asm!("csrrw x0, sepc, $0"
                 :
                 : "r"(val));
         }
@@ -42,7 +42,7 @@ impl CSRWrite for SEPC {
 
     fn bit_set(bitvec: u32) {
         unsafe {
-            asm!("csrrs x0, sepc, $0"
+            llvm_asm!("csrrs x0, sepc, $0"
                 :
                 : "r"(bitvec));
         }
@@ -50,7 +50,7 @@ impl CSRWrite for SEPC {
 
     fn bit_clear(bitvec: u32) {
         unsafe {
-            asm!("csrrc x0, sepc, $0"
+            llvm_asm!("csrrc x0, sepc, $0"
                 :
                 : "r"(bitvec));
         }

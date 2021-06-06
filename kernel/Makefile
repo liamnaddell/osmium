@@ -9,7 +9,7 @@ binary:
 .PHONY: binary
 
 elf2bin: binary
-	riscv32-unkown-elf-objcopy -O binary bin/osmium bin/osmium.bin
+	riscv32-unknown-elf-objcopy -O binary bin/osmium bin/osmium.bin
 	python3 append_length.py
 
 .PHONY: elf2bin

@@ -253,7 +253,7 @@ impl fmt::Display for PageError {
 }
 
 impl<'a> Allocator<'a> {
-    pub unsafe fn new(frames: *mut u32, is_used: &Fn(usize) -> bool) -> Allocator<'a> {
+    pub unsafe fn new(frames: *mut u32, is_used: &dyn Fn(usize) -> bool) -> Allocator<'a> {
         let frames = &mut *(frames as *mut [Frame; N_FRAMES]);
         let mut stack = 0;
         for i in 0..N_FRAMES {

@@ -1,3 +1,5 @@
+#![feature(llvm_asm)]
+#![feature(global_asm)]
 use core::fmt;
 use csr;
 use csr::CSRRead;
@@ -254,7 +256,7 @@ impl TrapFrame {
 pub fn trap_init() {
     dprintln!("setting stvec");
     stvec::STVEC::set_mode(stvec::Mode::Direct);
-    let trap_entry_addr = unsafe { (&trap_entry as *const u8) } as u32;
+    let trap_entry_addr = unsafe { &trap_entry as *const u8 } as u32;
     dprintln!("trap entry: {:x}", trap_entry_addr);
     stvec::STVEC::set_trap_base(trap_entry_addr);
 }
@@ -365,7 +367,7 @@ fn trap(tf: TrapFrame) -> ! {
     let sie: u32;
     // TODO: create CSR wrapper
     unsafe {
-        asm!(
+        llvm_asm!(
             "
         csrrs $0, sstatus, x0\n
         csrrs $1, sie, x0\n
@@ -444,7 +446,7 @@ extern "C" fn trap_entry_rust(regs: *const Register) -> ! {
     let sp;
     let pc;
     unsafe {
-        asm!(
+        llvm_asm!(
             "
             csrrs $0, sscratch, x0\n
             csrrs $1, sepc, x0\n
@@ -465,7 +467,7 @@ pub unsafe fn pop_trap_frame(tf: &TrapFrame) -> ! {
     let sstatus: u32;
     let sie: u32;
     let sp: u32;
-    asm!(
+    llvm_asm!(
         "
     csrrs $0, sepc, x0\n
     csrrs $1, scause, x0\n
@@ -486,7 +488,7 @@ pub unsafe fn pop_trap_frame(tf: &TrapFrame) -> ! {
         sp
     );
 
-    asm!(
+    llvm_asm!(
         "
         csrrw x0, sscratch, $0\n
         csrrw x0, sepc, $1\n
@@ -496,7 +498,7 @@ pub unsafe fn pop_trap_frame(tf: &TrapFrame) -> ! {
 
     );
 
-    asm!(
+    llvm_asm!(
         "
         mv sp, $0\n
 

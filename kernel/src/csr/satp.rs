@@ -11,7 +11,7 @@ impl CSRRead for SATP {
     fn read_csr() -> u32 {
         let result: u32;
         unsafe {
-            asm!("csrrs $0, satp, x0"
+            llvm_asm!("csrrs $0, satp, x0"
                 : "=&r"(result));
         }
         result
@@ -28,7 +28,7 @@ impl CSRWrite for SATP {
         let result: u32;
 
         unsafe {
-            asm!("csrrw $0, satp, $1"
+            llvm_asm!("csrrw $0, satp, $1"
                 : "=&r"(result)
                 :   "r"(val));
         }
@@ -36,7 +36,7 @@ impl CSRWrite for SATP {
     }
     fn write_csr(val: u32) {
         unsafe {
-            asm!("csrrw x0, satp, $0"
+            llvm_asm!("csrrw x0, satp, $0"
                 :
                 : "r"(val));
         }
@@ -44,7 +44,7 @@ impl CSRWrite for SATP {
 
     fn bit_set(bitvec: u32) {
         unsafe {
-            asm!("csrrs x0, satp, $0"
+            llvm_asm!("csrrs x0, satp, $0"
                 :
                 : "r"(bitvec));
         }
@@ -52,7 +52,7 @@ impl CSRWrite for SATP {
 
     fn bit_clear(bitvec: u32) {
         unsafe {
-            asm!("csrrc x0, satp, $0"
+            llvm_asm!("csrrc x0, satp, $0"
                 :
                 : "r"(bitvec));
         }
