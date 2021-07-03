@@ -10,8 +10,8 @@ use core::fmt::Write;
 #[no_mangle]
 pub static KERN_START: usize = 0x50000;
 
-const UART_RX: *const u8 = 0x80000000 as *const u8;
-const UART_TX: *mut u8 = 0x80000004 as *mut u8;
+const UART_RX: *const u8 = 0x10000000 as *const u8;
+const UART_TX: *mut u8 = 0x10000004 as *mut u8;
 
 #[inline(never)]
 pub fn read_byte() -> u8 {
@@ -201,7 +201,7 @@ fn setup_boot_time_trap() {
 
 #[no_mangle]
 pub extern "C" fn __start_rust() -> ! {
-    println!("setup");
+    println!("__start_rust: BOOTLOADER LOADED");
     //setup_boot_time_trap();
     let size = read_u32() as usize;
     let mut addr = KERN_START;
