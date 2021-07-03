@@ -83,7 +83,7 @@ fn boot_alloc<'a>() -> (u64, BootAlloc<'a>) {
 
 #[no_mangle]
 pub extern "C" fn __start_rust() -> ! {
-    // setup kernel page table
+    // setup kernel page directory
     let kern_pgdir =
         unsafe { &mut *((&mut kernel_pgdir_ptr as *mut u32) as *mut paging::PageTable) };
     let kern_pgdir_addr = (kern_pgdir as *const paging::PageTable) as u32;
@@ -104,9 +104,9 @@ pub extern "C" fn __start_rust() -> ! {
         if (addr as u64) < kernel_memory_end + (paging::PGSIZE as u64) {
             return true;
         }
-        if addr as u64 >= IO_REGION {
+        /*if addr as u64 >= IO_REGION {
             return true;
-        }
+        }*/
         false
     };
     let mut allocator = unsafe { paging::Allocator::new(kernel_frames, &is_used) };

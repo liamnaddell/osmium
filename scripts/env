@@ -1,0 +1,2 @@
+alias gdb='riscv64-multilib-linux-gnu-gdb'
+
