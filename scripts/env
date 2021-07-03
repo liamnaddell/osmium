@@ -1,2 +1,3 @@
 alias gdb='riscv64-multilib-linux-gnu-gdb'
+export CC=riscv32-unknown-elf-gcc
 

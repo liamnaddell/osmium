@@ -8,8 +8,8 @@ use memutil;
 pub const LOG_PGSIZE: usize = 12;
 //4096
 pub const PGSIZE: usize = 1 << LOG_PGSIZE;
-const MEM_SIZE: usize = 0x7FFFFE4; //0x8000000 is 2GB, IO is last frame
-//524,289
+//const MEM_SIZE: usize = 0x14e9000; //attempt to add with overflow
+//const MEM_SIZE: usize = 0x14e8fff; //FailedToAllocMemory
 pub const N_FRAMES: usize = MEM_SIZE / PGSIZE;
 pub const PAGE_ENTRY_SIZE: usize = 4;
 pub const N_PAGE_ENTRY: usize = PGSIZE / PAGE_ENTRY_SIZE;

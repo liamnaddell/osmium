@@ -30,9 +30,13 @@ use csr::satp;
 use csr::stvec;
 
 extern "C" {
+    //kernel_end is provided in linker.ld, comes after kernel_reserved_dram_aligned and contains
+    //the stack, the heap, the interrupt stack, and the kernel pgdir pointer 
     static kernel_end: u8;
+    //page directory pointer
     static mut kernel_pgdir_ptr: u32;
     static mut temporary_pgdir_ptr: u32;
+    //the heap
     static mut kernel_frames_ptr: u32;
     static mut stack_stop: u8;
     static mut interrupt_stack_stop: u8;
@@ -114,15 +118,15 @@ pub extern "C" fn __start_rust() -> ! {
 
     println!("envs start with {:x}", get_kernel_end_addr());
     if let Err(e) = mapper.boot_map_region(
-        paging::VirtAddr::new(0),
-        paging::PhysAddr::new(0),
+        paging::VirtAddr::new(0x8000_0000),
+        paging::PhysAddr::new(0x8000_0000),
         kernel_memory_end as usize,
         paging::Flag::READ | paging::Flag::WRITE | paging::Flag::EXEC | paging::Flag::VALID,
         &mut allocator,
     ) {
         panic!("Failed to map kernel region. Reason: {:?}", e);
     }
-    println!("kernel mapping created");
+    println!("[mapped] kernel reserved memory and stack");
 
     // stack stop
     if let Err(e) = mapper.boot_map_region(
@@ -134,6 +138,8 @@ pub extern "C" fn __start_rust() -> ! {
     ) {
         panic!("Failed to map kernel region. Reason: {:?}", e);
     }
+    println!("[mapped] stack stopgap reserved");
+
     if let Err(e) = mapper.boot_map_region(
         paging::VirtAddr::new(unsafe { &interrupt_stack_stop as *const u8 as u32 }),
         paging::PhysAddr::new(unsafe { &interrupt_stack_stop as *const u8 as u64 }),
@@ -143,17 +149,7 @@ pub extern "C" fn __start_rust() -> ! {
     ) {
         panic!("Failed to map kernel region. Reason: {:?}", e);
     }
-
-    if let Err(e) = mapper.boot_map_region(
-        paging::VirtAddr::new(IO_REGION as u32),
-        paging::PhysAddr::new(IO_REGION),
-        paging::PGSIZE * 2,
-        paging::Flag::READ | paging::Flag::WRITE | paging::Flag::EXEC | paging::Flag::VALID,
-        &mut allocator,
-    ) {
-        panic!("Failed to map io region. Reason: {:?}", e);
-    }
-    println!("io mapping created");
+    println!("[mapped] interrupt stack stopgap reserved");
 
     satp::SATP::set_ppn(kern_pgdir_addr >> paging::LOG_PGSIZE);
     satp::SATP::enable_paging();
@@ -204,7 +200,7 @@ pub extern "C" fn __start_rust() -> ! {
     println!("setting up file system");
     files::init();
 
-    let sh_file = match files::search("/bin/sh") {
+    let sh_file = match files::search("/bin/nop") {
         Some(file) => file,
         None => panic!("failed to find sh"),
     };

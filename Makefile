@@ -6,7 +6,7 @@ $(BINS):
 	CARGO_HOME=`pwd`/.cargo make build -C $@
 .PHONY: build $(BINS)
 
-run: build
+run:
 	./scripts/run.sh	
 
 # build by using Docker
