@@ -6,8 +6,10 @@ use csr::{CSRRead, CSRWrite};
 use memutil;
 
 pub const LOG_PGSIZE: usize = 12;
+//4096
 pub const PGSIZE: usize = 1 << LOG_PGSIZE;
 const MEM_SIZE: usize = (1 << 31) + PGSIZE; // memory is 2GB, IO is last frame
+//524,289
 pub const N_FRAMES: usize = MEM_SIZE / PGSIZE;
 pub const PAGE_ENTRY_SIZE: usize = 4;
 pub const N_PAGE_ENTRY: usize = PGSIZE / PAGE_ENTRY_SIZE;
@@ -257,6 +259,7 @@ impl<'a> Allocator<'a> {
         let frames = &mut *(frames as *mut [Frame; N_FRAMES]);
         let mut stack = 0;
         for i in 0..N_FRAMES {
+            //none of are pages are unused
             if is_used(i * PGSIZE) {
                 continue;
             }
@@ -271,6 +274,7 @@ impl<'a> Allocator<'a> {
     }
     pub fn alloc(&mut self) -> Result<Frame, PageError> {
         if self.stack == 0 {
+            println!("[paging.rs:274] stack=0");
             Err(PageError::FailedToAllocMemory)
         } else {
             self.stack -= 1;
@@ -486,11 +490,13 @@ impl<'a> Map<'a> {
     ) -> Result<&'a mut PageTable, PageError> {
         let frame: Frame;
         let initialize;
+        println!("[paging.rs:489] create_next_table");
         {
             let entry = &mut self.dir[page.vpn1() as usize];
             let tmp_entry = &mut self.tmp_page[page.vpn1() as usize];
             initialize = if !entry.is_valid() {
                 frame = allocator.alloc()?;
+                println!("[paging.rs:495] finished alloc");
                 entry.set_frame(frame, Flag::VALID);
                 tmp_entry.set_frame(frame, Flag::READ | Flag::WRITE | Flag::VALID);
                 true
@@ -521,6 +527,7 @@ impl<'a> Map<'a> {
         allocator: &mut Allocator,
         boot: bool,
     ) -> Result<(), PageError> {
+        println!("[paging.rs:524] map_inner");
         let vpn1 = self.create_next_table(page, allocator, boot)?;
         let entry = &mut vpn1[page.vpn0() as usize];
 
@@ -653,6 +660,7 @@ impl<'a> Map<'a> {
         allocator: &mut Allocator,
         boot: bool,
     ) -> Result<(), PageError> {
+        println!("[paging.rs:656] Map region inner");
         if virt_addr.to_u32() % (PGSIZE as u32) != 0 {
             return Err(PageError::ProgramError("page alignment is invalid"));
         }
@@ -722,7 +730,7 @@ impl<'a> Map<'a> {
         self.map_region_inner(virt_addr, phys_addr, size, flag, allocator, false)
     }
 
-    // after boot, create identity map of kernel properties
+    // after booting, create identity map of kernel properties
     pub fn boot_map_region(
         &mut self,
         virt_addr: VirtAddr,

@@ -6,11 +6,8 @@ $(BINS):
 	CARGO_HOME=`pwd`/.cargo make build -C $@
 .PHONY: build $(BINS)
 
-setup:
-	./scripts/setup.sh
-
 run:
-	./scripts/run.sh
+	./scripts/run.sh	
 
 # build by using Docker
 d_build:
