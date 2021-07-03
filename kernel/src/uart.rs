@@ -1,7 +1,7 @@
 use core::fmt::Write;
 
-const UART_RX: *const u8 = 0x80000000 as *const u8;
-const UART_TX: *mut u8 = 0x80000004 as *mut u8;
+const UART_RX: *const u8 = 0x10000000 as *const u8;
+const UART_TX: *mut u8 = 0x10000000 as *mut u8;
 
 pub const DEBUG: bool = false;
 
