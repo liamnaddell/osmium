@@ -4,6 +4,9 @@
 .global abort
 
 _start:
+    li s1, 0x10000000
+    li s2, 0x48
+    sb s2, 0(s1)
     /* Set up stack pointer. */
     lui     sp, %hi(stack_end)
     addi    sp, sp, %lo(stack_end)

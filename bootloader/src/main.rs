@@ -11,7 +11,8 @@ use core::fmt::Write;
 pub static KERN_START: usize = 0x50000;
 
 const UART_RX: *const u8 = 0x10000000 as *const u8;
-const UART_TX: *mut u8 = 0x10000004 as *mut u8;
+
+const UART_TX: *mut u8 = 0x10000000 as *mut u8;
 
 #[inline(never)]
 pub fn read_byte() -> u8 {
